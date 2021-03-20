@@ -24,7 +24,7 @@ public class CarNode
 	/**
 	 * Constructor that accepts the car to be held by the new node
 	 */
-	public CarNode(Car c) 
+	public CarNode(Car c)
 	{
 		car = c;
 	}
