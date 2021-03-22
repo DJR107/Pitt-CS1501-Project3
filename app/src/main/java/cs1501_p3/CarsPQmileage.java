@@ -19,10 +19,16 @@ public class CarsPQmileage
 	 */
 	private int size;
 
+	/**
+	 * HashTable for VINs of cars
+	 */
+	private Hashtable<String, Integer> hashed;
+
 	public CarsPQmileage()
 	{
 		carArray = new Car[15];
 		size = 0;
+		hashed = new Hashtable<String, Integer>();
 	}
 
 	/**
@@ -37,78 +43,59 @@ public class CarsPQmileage
 		if (size == carArray.length)
 			carArray = resizeArr();
 
-		for (int i=0; i<size; i++)
+		try
 		{
-			if (carArray[i].getVIN().compareTo(c.getVIN()) == 0)
-			{
+			int a = get(c.getVIN());
+			if (a < -1)
 				throw new IllegalStateException("This VIN already here");
-			}
 		}
+		catch (NoSuchElementException ignored) {}
 
-		if (carArray[0] == null)
-		{
-			carArray[0] = c;
-		}
-		else
-		{
-			int index = size;
+		hashed.put(c.getVIN(), size);
+		carArray[size] = c;
 
-			while (index > 0)
+		int index = size;
+		while (index > 0)
+		{
+			if (index % 2 == 1)
 			{
-				//System.out.println("index: "+index);
-				if (index % 2 == 1)
+				index = (index-1)/2;
+				Car parent = carArray[index];
+				if (c.getMileage() < parent.getMileage())
 				{
-					index = (index-1)/2;
-					//System.out.println("New index: "+index);
-					Car parent = carArray[index];
-					//System.out.println("Parent Price: "+parent.getCar().getMileage())''
-
-					if (c.getMileage() < parent.getMileage())
-					{
-						//System.out.println("Needs Swapping");
-						carArray[(2*index)+1] = parent;
-						//System.out.println("New Left Price: "+parent.getLeft().getCar().getMileage());
-					}
-					else
-					{
-						//System.out.println("No Swapping Needed");
-						carArray[(2*index)+1] = c;
-						//System.out.println("New Left Price: "+parent.getLeft().getCar().getMileage());
-						break;
-					}
+					carArray[(2*index)+1] = parent;
+					hashed.put(parent.getVIN(), (2*index)+1);
 				}
-				else if (index % 2 == 0)
+				else
 				{
-					index = (index-2)/2;
-					//System.out.println("New index: "+index);
-					Car parent = carArray[index];
-					//System.out.println("Parent Price: "+parent.getCar().getMileage());
-
-					if (c.getMileage() < parent.getMileage())
-					{
-						//System.out.println("Needs Swapping");
-						carArray[(2*index)+2] = parent;
-						//System.out.println("New Right Price: "+parent.getRight().getCar().getMileage());
-					}
-					else
-					{
-						//System.out.println("No Swapping Needed");
-						carArray[(2*index)+2] = c;
-						//System.out.println("New Right Price: "+parent.getRight().getCar().getMileage());
-						break;
-					}
+					carArray[(2*index)+1] = c;
+					hashed.put(c.getVIN(), (2*index)+1);
+					break;
 				}
-				if (index == 0)
+			}
+			else if (index % 2 == 0)
+			{
+				index = (index-2)/2;
+				Car parent = carArray[index];
+				if (c.getMileage() < parent.getMileage())
 				{
-					//System.out.println("Changed Root");
-					carArray[index] = c;
-					//System.out.println("New Root Price: "+root.getCar().getMileage());
+					carArray[(2*index)+2] = parent;
+					hashed.put(parent.getVIN(), (2*index)+2);
 				}
+				else
+				{
+					carArray[(2*index)+2] = c;
+					hashed.put(c.getVIN(), (2*index)+2);
+					break;
+				}
+			}
+			if (index == 0)
+			{
+				carArray[index] = c;
+				hashed.put(c.getVIN(), index);
 			}
 		}
 		size++;
-		//System.out.println("Done Adding");
-		//System.out.println();
 	}
 
 	/**
@@ -120,14 +107,15 @@ public class CarsPQmileage
 	 */
 	public int get(String vin) throws NoSuchElementException
 	{
-		for (int i=0; i<size; i++)
+		try
 		{
-			if (carArray[i].getVIN().compareTo(vin) == 0)
-			{
-				return i;
-			}
+			int a = hashed.get(vin);
+			return a;
 		}
-		throw new NoSuchElementException("This VIN not here");
+		catch (NullPointerException e)
+		{
+			throw new NoSuchElementException("This VIN not here");		
+		}
 	}
 
 	/**
@@ -264,6 +252,7 @@ public class CarsPQmileage
 		}
 
 		Car carToRemove = carArray[index];
+		hashed.remove(vin);
 
 		try
 		{
@@ -321,15 +310,20 @@ public class CarsPQmileage
 	{
 		Car tempCar = carArray[(2*index)+1];
 		carArray[(2*index)+1] = nodeToSwap;
+		hashed.put(nodeToSwap.getVIN(), (2*index)+1);
 		carArray[index] = tempCar;
+		hashed.put(tempCar.getVIN(), index);
 	}
 
 	private void swapRight(Car nodeToSwap, int index)
 	{
 		Car tempCar = carArray[(2*index)+2];
 		carArray[(2*index)+2] = nodeToSwap;
+		hashed.put(nodeToSwap.getVIN(), (2*index)+2);
 		carArray[index] = tempCar;
+		hashed.put(tempCar.getVIN(), index);
 	}
+
 
 	public Car getAtIndex(int i)
 	{
@@ -342,6 +336,8 @@ public class CarsPQmileage
 		{
 			if (carArray[i] != null)
 				carArray[i].print();
+			else
+				break;
 		}
 	}
 

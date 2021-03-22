@@ -12,17 +12,17 @@ public class CarsPQ implements CarsPQ_Inter
 	/**
 	 * CarsPQ sorted for lowest price as priority
 	 */
-	CarsPQprice carsPrice;
+	private CarsPQprice carsPrice;
 
 	/**
 	 * CarsPQ sorted for lowest mileage as priority
 	 */
-	CarsPQmileage carsMileage;
+	private CarsPQmileage carsMileage;
 
 	/**
 	 * Number of added cars
 	 */
-	int size;
+	private int size;
 
 	public CarsPQ(String fileName)
 	{
@@ -64,16 +64,9 @@ public class CarsPQ implements CarsPQ_Inter
 	 */
 	public void add(Car c) throws IllegalStateException
 	{
-		try
-		{
-			carsPrice.add(c);
-			carsMileage.add(c);
-			size++;
-		}
-		catch (IllegalStateException e)
-		{
-			throw new IllegalStateException("This VIN already here");
-		}
+		carsPrice.add(c);
+		carsMileage.add(c);
+		size++;
 	}
 
 	/**
@@ -85,15 +78,8 @@ public class CarsPQ implements CarsPQ_Inter
 	 */
 	public Car get(String vin) throws NoSuchElementException
 	{
-		for (int i=0; i<size; i++)
-		{
-			if (carsPrice.getAtIndex(i).getVIN().compareTo(vin) == 0)
-			{
-				return carsPrice.getAtIndex(i);
-			}
-		}
-
-		throw new NoSuchElementException("This VIN not here");
+		int i = carsPrice.get(vin);
+		return carsPrice.getAtIndex(i);
 	}
 
 	/**
@@ -106,15 +92,8 @@ public class CarsPQ implements CarsPQ_Inter
 	 */
 	public void updatePrice(String vin, int newPrice) throws NoSuchElementException
 	{
-		try
-		{
-			carsPrice.updatePrice(vin, newPrice);
-			carsMileage.updatePrice(vin, newPrice);
-		}
-		catch (NoSuchElementException e)
-		{
-			throw new NoSuchElementException("This VIN not here");
-		}
+		carsPrice.updatePrice(vin, newPrice);
+		carsMileage.updatePrice(vin, newPrice);
 	}
 
 	/**
@@ -127,15 +106,8 @@ public class CarsPQ implements CarsPQ_Inter
 	 */
 	public void updateMileage(String vin, int newMileage) throws NoSuchElementException
 	{
-		try
-		{
-			carsPrice.updateMileage(vin, newMileage);
-			carsMileage.updateMileage(vin, newMileage);
-		}
-		catch (NoSuchElementException e)
-		{
-			throw new NoSuchElementException("This VIN not here");
-		}
+		carsPrice.updateMileage(vin, newMileage);
+		carsMileage.updateMileage(vin, newMileage);
 	}
 
 	/**
@@ -148,15 +120,8 @@ public class CarsPQ implements CarsPQ_Inter
 	 */
 	public void updateColor(String vin, String newColor) throws NoSuchElementException
 	{
-		try
-		{
-			carsPrice.updateColor(vin, newColor);
-			carsMileage.updateColor(vin, newColor);
-		}
-		catch (NoSuchElementException e)
-		{
-			throw new NoSuchElementException("This VIN not here");
-		}
+		carsPrice.updateColor(vin, newColor);
+		carsMileage.updateColor(vin, newColor);
 	}
 
 	/**
@@ -168,16 +133,9 @@ public class CarsPQ implements CarsPQ_Inter
 	 */
 	public void remove(String vin) throws NoSuchElementException
 	{
-		try
-		{
-			carsPrice.remove(vin);
-			carsMileage.remove(vin);
-			size--;
-		}
-		catch (NoSuchElementException e)
-		{
-			throw new NoSuchElementException("This VIN not here");
-		}
+		carsPrice.remove(vin);
+		carsMileage.remove(vin);
+		size--;
 	}
 
 	/**
@@ -240,9 +198,9 @@ public class CarsPQ implements CarsPQ_Inter
 
 		for (int i=0; i<size; i++)
 		{
-			if (carsPrice.getAtIndex(i).getMake().compareTo(make) == 0 && carsPrice.getAtIndex(i).getModel().compareTo(model) == 0)
+			if (carsMileage.getAtIndex(i).getMake().compareTo(make) == 0 && carsMileage.getAtIndex(i).getModel().compareTo(model) == 0)
 			{
-				newCarsMileage.add(carsPrice.getAtIndex(i));
+				newCarsMileage.add(carsMileage.getAtIndex(i));
 			}
 		}
 		return newCarsMileage.getRoot();

@@ -10,6 +10,7 @@ public class App {
 		Car c = new Car("5", "Ford", "Fiesta", 20, 200000, "White");
 		cpq.add(c);
 
+		/*
 		System.out.println("Lowest Price:");
 		c = cpq.getLowPrice();
 		c.print();
@@ -17,6 +18,7 @@ public class App {
 		System.out.println("Lowest Mileage:");
 		c = cpq.getLowMileage();
 		c.print();
+		*/
 
 		//cpq.print();
 	}
